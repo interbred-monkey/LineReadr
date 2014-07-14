@@ -8,6 +8,10 @@ var readline = require('readline');
 // include the file system library
 var fs = require('fs');
 
+// include the event emitter library
+var events = require('events'),
+    event_emitter = new events.EventEmitter();
+
 // include the async library
 var async = require('async');
 
@@ -64,6 +68,7 @@ var LineReadr = function(_filepath, _opts){
   .pause();
 
   _instance._open_readr.on('line', _instance.onLine);
+  _instance._open_readr.on('close', _instance.closedFile);
 
   return;
 
@@ -92,11 +97,16 @@ _instance.prototype.onLine = function(_line) {
 
     }
 
-    else {
+  }
 
-      _instance._lines_read++;
+  _instance._lines_read++;
 
-      var _line_bits = _line.trim().split(_instance._delimeter);
+  if (!_.isNull(_instance._delimeter)) {
+
+    var _line_bits = _line.trim().split(_instance._delimeter);
+
+    if (!_.isEmpty(_instance._structure)) {
+
       var ob = {};
 
       for (var _is in _instance._structure) {
@@ -105,19 +115,31 @@ _instance.prototype.onLine = function(_line) {
 
       }
 
-      _instance._lines.push(ob);
+    }
 
-      if (_instance._lines_read === _instance._lines_to_read) {
+    _instance._lines.push((!_.isUndefined(ob)?ob:_line_bits);
 
-        _instance._open_readr.pause();
+    if (_instance._lines_read === _instance._lines_to_read) {
 
-        return callback()
+      _instance._open_readr.pause();
 
-      }
+      return callback()
 
     }
 
   }
+
+  else {
+
+    _instance._lines.push(_line);
+
+  }
+
+}
+
+_instance.prototype.closedFile = function() {
+
+  
 
 }
 

@@ -116,7 +116,7 @@ LineReadr.prototype.onLine = function(_line) {
 
     }
 
-    _instance._lines.push((!_.isUndefined(ob)?ob:_line_bits);
+    _instance._lines.push((!_.isUndefined(ob)?ob:_line_bits));
 
   }
 

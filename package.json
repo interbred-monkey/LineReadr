@@ -1,0 +1,11 @@
+{
+  "name": "LineReadr",
+  "version": "0.0.1",
+  "readme": "README.md",
+  "description": "Reads lines of a file structured or unstructured",
+  "main": "LineReadr.js",
+  "dependencies": {
+    "underscore": "",
+    "async": ""
+  }
+}

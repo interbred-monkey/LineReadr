@@ -74,7 +74,7 @@ var LineReadr = function(_filepath, _opts){
 
 }
 
-_instance.prototype = {
+LineReadr.prototype = {
   _open_readr: null,
   _use_headers: false,
   _first_line: true,
@@ -85,7 +85,7 @@ _instance.prototype = {
   _lines: []
 }
 
-_instance.prototype.onLine = function(_line) {
+LineReadr.prototype.onLine = function(_line) {
 
   if (_instance._use_headers === true) {
 
@@ -93,7 +93,6 @@ _instance.prototype.onLine = function(_line) {
 
       _instance._structure = _line.trim().split(_instance._delimeter);
       first_line = false;
-      return;
 
     }
 
@@ -119,14 +118,6 @@ _instance.prototype.onLine = function(_line) {
 
     _instance._lines.push((!_.isUndefined(ob)?ob:_line_bits);
 
-    if (_instance._lines_read === _instance._lines_to_read) {
-
-      _instance._open_readr.pause();
-
-      return callback()
-
-    }
-
   }
 
   else {
@@ -135,11 +126,34 @@ _instance.prototype.onLine = function(_line) {
 
   }
 
+  if (_instance._lines_read === _instance._lines_to_read) {
+
+    _instance._open_readr.pause();
+    _instance._lines_read = 0;
+
+    event_emitter.emit('finished');
+
+  }
+
 }
 
-_instance.prototype.closedFile = function() {
+LineReadr.prototype.closedFile = function() {
 
-  
+   event_emitter.emit('finished');
+
+}
+
+LineReadr.prototype.readLines = function(_opts, _callback) {
+
+  _instance._lines_to_read = opts.num_lines;
+
+  event_emitter.on('finished', function() {
+
+    return callback(null, _instance._lines);
+
+  })
+
+  _instance._open_readr.resume();
 
 }
 
